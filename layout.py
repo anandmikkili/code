@@ -25,6 +25,25 @@ def create_layout(app) -> html.Div:
                 style={"textAlign": "center", "color": "#666"},
             ),
 
+            # ── Dropdown selector ─────────────────────────────────────────────
+            html.Div(
+                style={"marginBottom": "16px"},
+                children=[
+                    html.Label("Select a Product (Dropdown)", style={"fontWeight": "bold"}),
+                    dcc.Dropdown(
+                        id="product-dropdown",
+                        options=PRODUCT_OPTIONS,
+                        value="product_a",          # default selection
+                        clearable=False,
+                        style={"maxWidth": "320px"},
+                    ),
+                    html.Div(
+                        id="dropdown-output",
+                        style={"marginTop": "8px", "color": "#444", "fontStyle": "italic"},
+                    ),
+                ],
+            ),
+
             # ── Controls ──────────────────────────────────────────────────────
             html.Div(
                 style={"display": "flex", "gap": "24px", "flexWrap": "wrap", "marginBottom": "16px"},

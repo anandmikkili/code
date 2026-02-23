@@ -101,6 +101,35 @@ def _build_figure(
     return fig
 
 
+# ── Callback: dropdown selection display ──────────────────────────────────────
+
+@callback(
+    Output("dropdown-output", "children"),
+    Input("product-dropdown", "value"),
+)
+def display_dropdown_value(selected_value: str) -> str:
+    """
+    Return a human-readable string showing the currently selected dropdown value.
+
+    Parameters
+    ----------
+    selected_value : str
+        The ``value`` field of the chosen option (e.g. ``"product_a"``).
+
+    Returns
+    -------
+    str
+        A display string shown beneath the dropdown.
+    """
+    if not selected_value:
+        return "No product selected."
+    label = next(
+        (o["label"] for o in PRODUCT_OPTIONS if o["value"] == selected_value),
+        selected_value,
+    )
+    return f"Selected: {label} (value = \"{selected_value}\")"
+
+
 # ── Callback: update graph ─────────────────────────────────────────────────────
 
 @callback(
