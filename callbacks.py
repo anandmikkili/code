@@ -1,169 +1,169 @@
 """
-callbacks.py — Dash callback definitions.
+callbacks.py — Callback definitions for the Regional Sales Dashboard.
 
-Importing this module registers all callbacks with the global `dash.get_app()`
-instance, so app.py only needs `import callbacks`.
+Importing this module registers all callbacks with the global Dash app instance
+(via @callback), so app.py only needs `import callbacks`.
+
+Callbacks
+---------
+1. populate_regions   — fires on page load; seeds the region dropdown.
+2. populate_products  — fires when the region changes; rebuilds the product dropdown.
+3. update_table       — fires when region or product changes; renders the DataTable.
 """
 
 import dash
 from dash import Input, Output, callback, dash_table
-import plotly.graph_objects as go
 
-from data import df, PRODUCT_OPTIONS, MARKER_SYMBOLS, LINE_COLORS
+from data import MONTHS, SALES_DATA
 
 
-# ── Helper: build figure ───────────────────────────────────────────────────────
+# ── 1. Populate region dropdown on page load ───────────────────────────────────
 
-def _build_figure(
-    selected_products: list[str],
-    marker_size: int | float,
-    line_width: int | float,
-) -> go.Figure:
+@callback(
+    Output("region-dropdown", "options"),
+    Output("region-dropdown", "value"),
+    Input("init-store", "data"),
+)
+def populate_regions(_trigger) -> tuple[list[dict], str]:
     """
-    Construct a Plotly Figure containing one line+marker trace per product.
+    Seed the region dropdown with every region in SALES_DATA.
+    Runs once on page load because init-store is a dcc.Store with data=True.
+    The first region (alphabetically) is selected by default.
+    """
+    regions = sorted(SALES_DATA.keys())
+    options = [{"label": r, "value": r} for r in regions]
+    return options, regions[0]
 
-    Parameters
-    ----------
-    selected_products : list of column names from the DataFrame
-    marker_size       : size of the marker symbol
-    line_width        : width of the connecting line
 
-    Returns
+# ── 2. Populate product dropdown when region changes ───────────────────────────
+
+@callback(
+    Output("product-dropdown", "options"),
+    Output("product-dropdown", "value"),
+    Output("product-dropdown", "disabled"),
+    Input("region-dropdown", "value"),
+)
+def populate_products(region: str | None) -> tuple[list[dict], str | None, bool]:
+    """
+    Rebuild the product dropdown whenever the selected region changes.
+
+    Different regions carry different product sets, so the options list
+    is re-derived from SALES_DATA each time.
+    The first product (alphabetically) within the new region is auto-selected.
+    The dropdown is disabled when no region is chosen.
+    """
+    if not region:
+        return [], None, True
+
+    products = sorted(SALES_DATA[region].keys())
+    options = [{"label": p, "value": p} for p in products]
+    return options, products[0], False
+
+
+# ── 3. Render sales table when region or product changes ───────────────────────
+
+@callback(
+    Output("sales-table", "children"),
+    Input("region-dropdown", "value"),
+    Input("product-dropdown", "value"),
+)
+def update_table(region: str | None, product: str | None):
+    """
+    Build and return a DataTable showing month-by-month sales for the
+    selected region + product combination.
+
+    Columns
     -------
-    go.Figure
+    Month        : calendar month label
+    Units Sold   : units sold that month
+    MoM Change   : difference vs. the previous month (blank for January)
+
+    A summary row is appended showing the annual total and monthly average.
     """
-    fig = go.Figure()
-
-    for idx, product in enumerate(selected_products):
-        label  = next(o["label"] for o in PRODUCT_OPTIONS if o["value"] == product)
-        color  = LINE_COLORS[idx % len(LINE_COLORS)]
-        symbol = MARKER_SYMBOLS[idx % len(MARKER_SYMBOLS)]
-
-        fig.add_trace(
-            go.Scatter(
-                x=df["month"],
-                y=df[product],
-                mode="lines+markers",          # line with markers
-                name=label,
-                line=dict(
-                    color=color,
-                    width=line_width,
-                ),
-                marker=dict(
-                    symbol=symbol,
-                    size=marker_size,
-                    color=color,
-                    line=dict(color="white", width=1.5),  # white border for visibility
-                ),
-                hovertemplate=(
-                    "<b>%{fullData.name}</b><br>"
-                    "Month : %{x}<br>"
-                    "Units  : %{y:,}<extra></extra>"
-                ),
-            )
-        )
-
-    # ── Separate layout definition ─────────────────────────────────────────────
-    layout = go.Layout(
-        title=dict(
-            text="Monthly Sales by Product Line",
-            x=0.5,
-            xanchor="center",
-            font=dict(size=18),
-        ),
-        xaxis=dict(
-            title="Month",
-            showgrid=True,
-            gridcolor="#e0e0e0",
-            zeroline=False,
-        ),
-        yaxis=dict(
-            title="Units Sold",
-            showgrid=True,
-            gridcolor="#e0e0e0",
-            zeroline=False,
-            rangemode="tozero",
-        ),
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1,
-        ),
-        hovermode="x unified",
-        plot_bgcolor="white",
-        paper_bgcolor="white",
-        margin=dict(l=60, r=30, t=80, b=60),
-    )
-
-    fig.update_layout(layout)
-    return fig
-
-
-# ── Callback: update graph ─────────────────────────────────────────────────────
-
-@callback(
-    Output("line-graph", "figure"),
-    Input("product-checklist",  "value"),
-    Input("marker-size-slider", "value"),
-    Input("line-width-slider",  "value"),
-)
-def update_graph(
-    selected_products: list[str],
-    marker_size: int | float,
-    line_width: int | float,
-) -> go.Figure:
-    """Rebuild the line graph whenever the user changes any control."""
-    if not selected_products:
-        # Return an empty figure with a friendly message
-        fig = go.Figure()
-        fig.update_layout(
-            title="Select at least one product to display",
-            plot_bgcolor="white",
-            paper_bgcolor="white",
-        )
-        return fig
-
-    return _build_figure(selected_products, marker_size, line_width)
-
-
-# ── Callback: update summary table ────────────────────────────────────────────
-
-@callback(
-    Output("summary-table", "children"),
-    Input("product-checklist", "value"),
-)
-def update_summary_table(selected_products: list[str]):
-    """Render a summary statistics table below the graph."""
-    if not selected_products:
+    if not region or not product:
         return dash.no_update
 
-    cols = ["month"] + selected_products
-    visible_df = df[cols].copy()
+    monthly = SALES_DATA.get(region, {}).get(product)
+    if not monthly:
+        return dash.no_update
 
-    # Rename columns to human-friendly labels
-    rename_map = {o["value"]: o["label"] for o in PRODUCT_OPTIONS}
-    rename_map["month"] = "Month"
-    visible_df = visible_df.rename(columns=rename_map)
+    # Build per-month rows
+    records = []
+    for i, (month, units) in enumerate(zip(MONTHS, monthly)):
+        change = units - monthly[i - 1] if i > 0 else None
+        if change is None:
+            change_str = "—"
+        elif change > 0:
+            change_str = f"+{change}"
+        else:
+            change_str = str(change)
+
+        records.append({
+            "Month":      month,
+            "Units Sold": units,
+            "MoM Change": change_str,
+        })
+
+    # Summary row
+    total = sum(monthly)
+    avg   = total / len(monthly)
+    records.append({
+        "Month":      "Total / Avg",
+        "Units Sold": total,
+        "MoM Change": f"avg {avg:.1f}",
+    })
 
     return dash_table.DataTable(
-        data=visible_df.to_dict("records"),
-        columns=[{"name": c, "id": c} for c in visible_df.columns],
-        style_table={"overflowX": "auto"},
+        id="sales-data-table",
+        data=records,
+        columns=[{"name": c, "id": c} for c in ["Month", "Units Sold", "MoM Change"]],
+        style_table={"overflowX": "auto", "borderRadius": "6px", "overflow": "hidden"},
         style_header={
-            "backgroundColor": "#1f77b4",
+            "backgroundColor": "#2c3e50",
             "color": "white",
             "fontWeight": "bold",
             "textAlign": "center",
+            "padding": "10px 14px",
+            "fontSize": "14px",
         },
         style_cell={
             "textAlign": "center",
-            "padding": "8px",
+            "padding": "9px 14px",
             "fontFamily": "Arial, sans-serif",
+            "fontSize": "14px",
+            "border": "1px solid #e0e0e0",
         },
         style_data_conditional=[
-            {"if": {"row_index": "odd"}, "backgroundColor": "#f9f9f9"},
+            # Alternate row shading
+            {
+                "if": {"row_index": "odd"},
+                "backgroundColor": "#f4f6f7",
+            },
+            # Highlight the summary row
+            {
+                "if": {"filter_query": '{Month} = "Total / Avg"'},
+                "fontWeight": "bold",
+                "backgroundColor": "#d5e8d4",
+                "color": "#1e8449",
+            },
+            # Green for positive MoM change
+            {
+                "if": {
+                    "filter_query": '{MoM Change} contains "+"',
+                    "column_id": "MoM Change",
+                },
+                "color": "#1e8449",
+                "fontWeight": "bold",
+            },
+            # Red for negative MoM change
+            {
+                "if": {
+                    "filter_query": '{MoM Change} contains "-"',
+                    "column_id": "MoM Change",
+                },
+                "color": "#c0392b",
+                "fontWeight": "bold",
+            },
         ],
         page_action="none",
     )

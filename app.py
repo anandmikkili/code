@@ -1,16 +1,18 @@
 """
-Sample Plotly Dash App — Line Graph with Markers
-=================================================
-Data source : pandas DataFrame
-Layout      : defined separately in `layout.py`
-Callback    : defined separately in `callbacks.py`
+Regional Sales Dashboard
+========================
+Two chained dropdowns (Region → Product) drive a monthly sales DataTable.
+
+Layout   : defined in layout.py
+Callbacks: defined in callbacks.py
+Data     : defined in data.py
 """
 
 import dash
 from layout import create_layout
 import callbacks  # noqa: F401 — registers callbacks as a side-effect
 
-app = dash.Dash(__name__, title="Line Graph with Markers")
+app = dash.Dash(__name__, title="Regional Sales Dashboard")
 app.layout = create_layout(app)
 
 if __name__ == "__main__":

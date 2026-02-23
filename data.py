@@ -1,35 +1,38 @@
 """
-data.py — Sample DataFrame used by the app.
+data.py — Hierarchical sales data used by the app.
 
-The DataFrame contains monthly sales figures for three product lines.
-Columns:
-    month      : calendar month label
-    product_a  : units sold for Product A
-    product_b  : units sold for Product B
-    product_c  : units sold for Product C
+Data is organized as:
+    SALES_DATA[region][product] = [12 monthly unit sales values]
+
+MONTHS provides the 12 month labels aligned with those lists.
 """
-
-import pandas as pd
 
 MONTHS = [
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ]
 
-RAW_DATA = {
-    "month": MONTHS,
-    "product_a": [120, 135, 148, 162, 175, 190, 185, 200, 215, 230, 245, 260],
-    "product_b": [80,  95, 105, 98,  112, 125, 118, 130, 142, 155, 160, 170],
-    "product_c": [60,  70,  65,  80,  85,  90, 100,  95, 110, 118, 125, 140],
+# Each region carries a different product mix to demonstrate
+# that the product dropdown options genuinely depend on the region.
+SALES_DATA = {
+    "North": {
+        "Laptops":  [150, 160, 170, 180, 190, 200, 195, 210, 220, 230, 240, 250],
+        "Phones":   [200, 210, 205, 220, 230, 245, 240, 255, 260, 270, 280, 295],
+        "Tablets":  [ 80,  85,  90,  88,  95, 100,  98, 105, 110, 115, 120, 130],
+    },
+    "South": {
+        "Laptops":  [110, 120, 130, 125, 135, 145, 140, 150, 160, 170, 175, 185],
+        "Monitors": [ 60,  65,  70,  75,  80,  85,  82,  90,  95, 100, 105, 115],
+        "Keyboards":[ 40,  45,  50,  48,  55,  60,  58,  65,  70,  72,  78,  85],
+    },
+    "East": {
+        "Phones":   [180, 190, 185, 200, 210, 220, 215, 225, 235, 245, 255, 265],
+        "Tablets":  [ 70,  75,  80,  85,  90,  95,  92, 100, 105, 110, 118, 125],
+        "Printers": [ 30,  35,  32,  38,  42,  45,  44,  50,  55,  58,  62,  68],
+    },
+    "West": {
+        "Laptops":  [130, 140, 145, 150, 160, 170, 165, 175, 185, 195, 205, 215],
+        "Monitors": [ 55,  60,  65,  70,  75,  80,  78,  85,  90,  95, 100, 110],
+        "Phones":   [160, 170, 165, 175, 185, 195, 190, 200, 210, 220, 228, 238],
+    },
 }
-
-df = pd.DataFrame(RAW_DATA)
-
-PRODUCT_OPTIONS = [
-    {"label": "Product A", "value": "product_a"},
-    {"label": "Product B", "value": "product_b"},
-    {"label": "Product C", "value": "product_c"},
-]
-
-MARKER_SYMBOLS = ["circle", "square", "diamond"]
-LINE_COLORS    = ["#1f77b4", "#ff7f0e", "#2ca02c"]
