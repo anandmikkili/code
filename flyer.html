@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Breathe Again — OFUESI Conference 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bone:        #f1e4c8;
+    --bone-soft:   #e9d8b3;
+    --night:       #0e1a2b;
+    --night-deep:  #06101d;
+    --dust:        #6b4f33;
+    --ember:       #c8862a;
+    --gold:        #e4b25a;
+    --gold-bright: #f5d488;
+    --breath:      #4ea3a8;
+    --breath-deep: #1f5f6b;
+    --life:        #6ea24a;
+    --crimson:     #8a2a2a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: #2a2a2a;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--bone);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    margin: 24px auto;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 50% 0%, #1a3147 0%, #0e1a2b 40%, #06101d 100%);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  }
+
+  /* ============ DECORATIVE BACKGROUND ============ */
+  .bg-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Subtle wind texture */
+  .grain {
+    position: absolute; inset: 0;
+    opacity: 0.08;
+    background-image:
+      repeating-linear-gradient(115deg, transparent 0 3px, rgba(255,255,255,0.4) 3px 4px),
+      repeating-linear-gradient(65deg, transparent 0 6px, rgba(255,255,255,0.2) 6px 7px);
+    mix-blend-mode: overlay;
+    z-index: 1;
+  }
+
+  /* ============ FRAME ============ */
+  .frame {
+    position: absolute;
+    inset: 0.35in;
+    border: 1px solid rgba(228, 178, 90, 0.55);
+    z-index: 3;
+    pointer-events: none;
+  }
+  .frame::before, .frame::after {
+    content: "";
+    position: absolute;
+    left: 50%; transform: translateX(-50%);
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+  }
+  .frame::before { top: -1px; }
+  .frame::after  { bottom: -1px; }
+
+  .corner {
+    position: absolute;
+    width: 28px; height: 28px;
+    border: 2px solid var(--gold);
+    z-index: 4;
+  }
+  .corner.tl { top: 0.30in; left: 0.30in; border-right: none; border-bottom: none; }
+  .corner.tr { top: 0.30in; right: 0.30in; border-left:  none; border-bottom: none; }
+  .corner.bl { bottom: 0.30in; left: 0.30in; border-right: none; border-top: none; }
+  .corner.br { bottom: 0.30in; right: 0.30in; border-left:  none; border-top: none; }
+
+  /* ============ CONTENT ============ */
+  .content {
+    position: relative;
+    z-index: 5;
+    padding: 0.7in 0.7in 0.55in;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-height: 11in;
+  }
+
+  /* ---- Logo ---- */
+  .logo-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .ofuesi-logo {
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 35% 30%, #fff5d8 0%, var(--gold-bright) 30%, var(--gold) 55%, var(--ember) 90%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      0 0 0 2px rgba(255, 230, 180, 0.25),
+      0 0 0 5px rgba(228, 178, 90, 0.35),
+      0 0 40px rgba(245, 212, 136, 0.45);
+    position: relative;
+  }
+  .ofuesi-logo::after {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    border: 1px dashed rgba(228, 178, 90, 0.45);
+  }
+  .ofuesi-logo span {
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--night-deep);
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .ministry-name {
+    margin-top: 10px;
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 5px;
+    color: var(--gold-bright);
+  }
+
+  /* ---- Eyebrow ---- */
+  .eyebrow {
+    margin-top: 8px;
+    font-family: 'Cinzel', serif;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 8px;
+    color: var(--bone-soft);
+    opacity: 0.85;
+  }
+  .eyebrow .dot {
+    display: inline-block;
+    width: 4px; height: 4px;
+    background: var(--gold);
+    border-radius: 50%;
+    transform: translateY(-3px);
+    margin: 0 10px;
+  }
+
+  /* ---- Title ---- */
+  .title {
+    margin-top: 18px;
+    font-family: 'Cinzel', serif;
+    font-weight: 800;
+    font-size: 78px;
+    line-height: 0.95;
+    letter-spacing: 2px;
+    color: var(--bone);
+    text-shadow:
+      0 2px 0 rgba(0,0,0,0.4),
+      0 0 30px rgba(78, 163, 168, 0.35);
+  }
+  .title .again {
+    display: block;
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold) 55%, var(--ember));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    letter-spacing: 4px;
+  }
+
+  .subtitle {
+    margin-top: 14px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--breath);
+    letter-spacing: 1px;
+  }
+
+  /* ---- Verse ---- */
+  .verse {
+    margin-top: 26px;
+    max-width: 5.6in;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--bone-soft);
+    font-style: italic;
+    position: relative;
+  }
+  .verse::before, .verse::after {
+    content: "";
+    display: block;
+    height: 1px;
+    width: 80px;
+    margin: 14px auto;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .verse-ref {
+    display: block;
+    margin-top: 10px;
+    font-family: 'Cinzel', serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: var(--gold-bright);
+  }
+
+  /* ---- Divider ornament ---- */
+  .ornament {
+    margin: 26px auto 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--gold);
+  }
+  .ornament .line {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  .ornament .line.r {
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+  .ornament .gem {
+    width: 8px; height: 8px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    box-shadow: 0 0 12px rgba(245, 212, 136, 0.6);
+  }
+
+  /* ---- Date Block ---- */
+  .date-block {
+    margin-top: 22px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .date-day {
+    font-family: 'Cinzel', serif;
+    font-weight: 800;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--bone);
+    text-shadow: 0 0 18px rgba(78, 163, 168, 0.4);
+  }
+  .date-sep {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(180deg, transparent, var(--gold), transparent);
+  }
+  .date-meta {
+    text-align: left;
+    font-family: 'Cinzel', serif;
+  }
+  .date-meta .month {
+    font-size: 22px;
+    letter-spacing: 6px;
+    color: var(--gold-bright);
+    font-weight: 700;
+  }
+  .date-meta .year {
+    font-size: 14px;
+    letter-spacing: 8px;
+    color: var(--bone-soft);
+    margin-top: 4px;
+  }
+  .date-meta .days {
+    margin-top: 6px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--breath);
+  }
+
+  /* ---- Bottom row: Venue + QR ---- */
+  .bottom-row {
+    margin-top: auto;
+    padding-top: 30px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 28px;
+    align-items: center;
+  }
+
+  .venue {
+    text-align: left;
+    border-left: 2px solid var(--gold);
+    padding-left: 18px;
+  }
+  .venue .label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: var(--gold-bright);
+    margin-bottom: 8px;
+  }
+  .venue .name {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--bone);
+    line-height: 1.25;
+    margin-bottom: 6px;
+  }
+  .venue .addr {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+    color: var(--bone-soft);
+    line-height: 1.5;
+  }
+  .venue .map-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--breath);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--breath);
+    padding-bottom: 1px;
+    word-break: break-all;
+  }
+  .venue .map-link svg {
+    flex-shrink: 0;
+    fill: var(--breath);
+  }
+
+  .qr-box {
+    width: 1.45in;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .qr-placeholder {
+    width: 1.45in;
+    height: 1.45in;
+    background: var(--bone);
+    border: 4px solid var(--gold);
+    box-shadow: 0 0 0 1px var(--night-deep), 0 8px 24px rgba(0,0,0,0.5);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dust);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-align: center;
+  }
+  .qr-placeholder::before,
+  .qr-placeholder::after {
+    content: "";
+    position: absolute;
+    width: 22px; height: 22px;
+    border: 4px solid var(--night-deep);
+  }
+  .qr-placeholder::before { top: 8px; left: 8px; }
+  .qr-placeholder::after  { top: 8px; right: 8px; }
+  .qr-corner-bl {
+    position: absolute;
+    bottom: 8px; left: 8px;
+    width: 22px; height: 22px;
+    border: 4px solid var(--night-deep);
+  }
+  .qr-inner-text {
+    background: var(--bone);
+    padding: 4px 6px;
+    z-index: 2;
+  }
+  .qr-label {
+    margin-top: 10px;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold-bright);
+    text-align: center;
+  }
+  .qr-sublabel {
+    margin-top: 4px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--bone-soft);
+    text-align: center;
+  }
+
+  /* ---- Footer ---- */
+  .footer {
+    margin-top: 22px;
+    width: 100%;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--breath);
+    letter-spacing: 1px;
+    border-top: 1px solid rgba(228, 178, 90, 0.25);
+    padding-top: 14px;
+  }
+  .footer strong {
+    color: var(--gold-bright);
+    font-style: normal;
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    letter-spacing: 4px;
+    font-size: 11px;
+  }
+
+  @media print {
+    html, body { background: #fff; }
+    .page { margin: 0; box-shadow: none; }
+    @page { size: Letter; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Atmospheric background: dry valley silhouette + breath/wind + bones -->
+  <svg class="bg-svg" viewBox="0 0 850 1100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="moon" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff5d8" stop-opacity="0.9"/>
+        <stop offset="60%" stop-color="#e4b25a" stop-opacity="0.15"/>
+        <stop offset="100%" stop-color="#e4b25a" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="ridge1" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#1f5f6b" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#06101d" stop-opacity="0.95"/>
+      </linearGradient>
+      <linearGradient id="ridge2" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#6b4f33" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#06101d" stop-opacity="1"/>
+      </linearGradient>
+      <linearGradient id="valley" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#3a2a1c" stop-opacity="0.85"/>
+        <stop offset="100%" stop-color="#06101d" stop-opacity="1"/>
+      </linearGradient>
+      <linearGradient id="breath" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#4ea3a8" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#4ea3a8" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#4ea3a8" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Stars -->
+    <g fill="#f1e4c8" opacity="0.7">
+      <circle cx="80"  cy="60"  r="1"/>
+      <circle cx="160" cy="120" r="0.8"/>
+      <circle cx="240" cy="80"  r="1.2"/>
+      <circle cx="330" cy="140" r="0.7"/>
+      <circle cx="430" cy="50"  r="1"/>
+      <circle cx="520" cy="110" r="0.9"/>
+      <circle cx="620" cy="70"  r="1.1"/>
+      <circle cx="720" cy="130" r="0.8"/>
+      <circle cx="780" cy="60"  r="1"/>
+      <circle cx="100" cy="220" r="0.9"/>
+      <circle cx="380" cy="200" r="0.8"/>
+      <circle cx="660" cy="220" r="1"/>
+    </g>
+
+    <!-- Glow / divine light -->
+    <circle cx="425" cy="180" r="220" fill="url(#moon)"/>
+
+    <!-- Wind / breath swirls -->
+    <g opacity="0.55" stroke-linecap="round" fill="none">
+      <path d="M -20 360 C 150 320, 320 420, 500 360 S 820 320, 900 380"
+            stroke="url(#breath)" stroke-width="1.4"/>
+      <path d="M -20 410 C 180 380, 360 460, 540 410 S 820 380, 900 430"
+            stroke="url(#breath)" stroke-width="0.9" opacity="0.7"/>
+      <path d="M -20 470 C 200 440, 380 510, 560 470 S 820 440, 900 480"
+            stroke="url(#breath)" stroke-width="0.7" opacity="0.5"/>
+    </g>
+
+    <!-- Distant ridge -->
+    <path d="M0 720 L 60 690 L 130 710 L 210 670 L 300 700 L 380 660 L 470 695 L 560 665 L 650 705 L 740 680 L 850 710 L 850 1100 L 0 1100 Z"
+          fill="url(#ridge1)"/>
+
+    <!-- Mid ridge -->
+    <path d="M0 820 L 90 790 L 180 810 L 280 770 L 380 800 L 480 765 L 580 795 L 690 770 L 790 800 L 850 790 L 850 1100 L 0 1100 Z"
+          fill="url(#ridge2)" opacity="0.95"/>
+
+    <!-- Valley floor -->
+    <path d="M0 920 L 850 920 L 850 1100 L 0 1100 Z" fill="url(#valley)"/>
+
+    <!-- Scattered dry bones in the valley (subtle) -->
+    <g fill="#e9d8b3" opacity="0.35">
+      <!-- bone 1 -->
+      <g transform="translate(110,975) rotate(-18)">
+        <circle cx="0" cy="0" r="5"/>
+        <circle cx="44" cy="0" r="5"/>
+        <rect x="2" y="-3" width="40" height="6" rx="3"/>
+      </g>
+      <!-- bone 2 -->
+      <g transform="translate(260,1010) rotate(12)">
+        <circle cx="0" cy="0" r="4"/>
+        <circle cx="36" cy="0" r="4"/>
+        <rect x="2" y="-2.5" width="32" height="5" rx="2.5"/>
+      </g>
+      <!-- bone 3 -->
+      <g transform="translate(430,985) rotate(-6)">
+        <circle cx="0" cy="0" r="6"/>
+        <circle cx="58" cy="0" r="6"/>
+        <rect x="3" y="-3.5" width="52" height="7" rx="3.5"/>
+      </g>
+      <!-- bone 4 -->
+      <g transform="translate(610,1015) rotate(22)">
+        <circle cx="0" cy="0" r="4.5"/>
+        <circle cx="38" cy="0" r="4.5"/>
+        <rect x="2.5" y="-3" width="33" height="6" rx="3"/>
+      </g>
+      <!-- bone 5 -->
+      <g transform="translate(740,985) rotate(-14)">
+        <circle cx="0" cy="0" r="5"/>
+        <circle cx="42" cy="0" r="5"/>
+        <rect x="2" y="-3" width="38" height="6" rx="3"/>
+      </g>
+      <!-- small ribs -->
+      <path d="M 180 1035 q 10 -8 20 0 M 210 1040 q 10 -8 20 0 M 340 1050 q 10 -8 20 0
+               M 510 1045 q 10 -8 20 0 M 670 1055 q 10 -8 20 0" stroke="#e9d8b3" stroke-width="1.2" fill="none"/>
+    </g>
+
+    <!-- A single rising silhouette — life returning -->
+    <g opacity="0.5">
+      <path d="M 425 940 C 420 900, 432 870, 425 830 C 418 870, 432 900, 425 940 Z" fill="#4ea3a8" opacity="0.45"/>
+      <circle cx="425" cy="820" r="6" fill="#4ea3a8" opacity="0.6"/>
+    </g>
+  </svg>
+
+  <div class="grain"></div>
+  <div class="frame"></div>
+  <span class="corner tl"></span>
+  <span class="corner tr"></span>
+  <span class="corner bl"></span>
+  <span class="corner br"></span>
+
+  <div class="content">
+
+    <div class="logo-wrap">
+      <div class="ofuesi-logo"><span>OFUESI</span></div>
+      <div class="ministry-name">O F U E S I &nbsp; M I N I S T R I E S</div>
+    </div>
+
+    <div class="eyebrow">ANNUAL<span class="dot"></span>CONFERENCE<span class="dot"></span>2026</div>
+
+    <h1 class="title">
+      BREATHE
+      <span class="again">again</span>
+    </h1>
+
+    <p class="subtitle">— The Valley of Dry Bones —</p>
+
+    <div class="verse">
+      &ldquo;Then He said to me, &lsquo;Prophesy to the breath; prophesy, son of man,
+      and say to the breath, Thus says the Lord God: Come from the four winds,
+      O breath, and breathe on these slain, that they may live.&rsquo;&rdquo;
+      <span class="verse-ref">E Z E K I E L &nbsp;&nbsp; 3 7 : 9</span>
+    </div>
+
+    <div class="ornament">
+      <span class="line"></span>
+      <span class="gem"></span>
+      <span class="line r"></span>
+    </div>
+
+    <div class="date-block">
+      <div class="date-day">24&ndash;26</div>
+      <div class="date-sep"></div>
+      <div class="date-meta">
+        <div class="month">JULY</div>
+        <div class="year">2 0 2 6</div>
+        <div class="days">Friday &middot; Saturday &middot; Sunday</div>
+      </div>
+    </div>
+
+    <div class="bottom-row">
+
+      <div class="venue">
+        <div class="label">V E N U E</div>
+        <div class="name">Day Springs Campground Ministries</div>
+        <div class="addr">5882 Rogers Hill Rd<br/>West, TX 76691</div>
+        <a class="map-link"
+           href="https://www.google.com/maps/search/?api=1&amp;query=Day+Springs+Campground+Ministries%2C+5882+Rogers+Hill+Rd%2C+West%2C+TX+76691">
+          <svg width="11" height="14" viewBox="0 0 11 14" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.5 0C2.46 0 0 2.46 0 5.5 0 9.62 5.5 14 5.5 14S11 9.62 11 5.5C11 2.46 8.54 0 5.5 0zm0 7.5a2 2 0 110-4 2 2 0 010 4z"/>
+          </svg>
+          Open in Google Maps
+        </a>
+      </div>
+
+      <div class="qr-box">
+        <div class="qr-placeholder">
+          <span class="qr-corner-bl"></span>
+          <span class="qr-inner-text">QR<br/>CODE</span>
+        </div>
+        <div class="qr-label">S C A N &nbsp; T O &nbsp; R E G I S T E R</div>
+        <div class="qr-sublabel">Coming soon</div>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      <strong>O F U E S I &nbsp; M I N I S T R I E S</strong><br/>
+      &ldquo;Come from the four winds, O breath, and breathe&rdquo;
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
